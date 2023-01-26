@@ -1,5 +1,5 @@
 import express from "express";
-import bodyParser, { json } from "body-parser";
+import bodyParser from "body-parser";
 import mongoose from "mongoose";
 import cors from "cors";
 import dotenv from "dotenv";
@@ -23,6 +23,8 @@ app.use(bodyParser.urlencoded( { limit: "30mb", extended: true } ))
 app.use(cors())
 app.use("/assests", express.static(path.join(__dirname, 'public/assets')))
 
+// FILE STORAGE
+
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, "public/assets");
@@ -33,3 +35,13 @@ const storage = multer.diskStorage({
 })
 
 const upload = multer( { storage } );
+
+// MONGOOSE SETUP 
+
+const PORT = process.env.PORT || 6001;
+mongoose.connect(process.env.MONGO_URL, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+}).then(() => {
+    app.listen(PORT, () => console.log(`Server Port: ${PORT}`))
+}).catch((error) => console.log(`${error} did not connect`))
